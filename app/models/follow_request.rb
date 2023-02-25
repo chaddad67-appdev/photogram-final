@@ -10,7 +10,7 @@
 #  sender_id    :integer
 #
 class FollowRequest < ApplicationRecord
-  validates :recipient_id, uniqueness: { scope: [:sender_id] }
+  # validates :recipient_id, uniqueness: { scope: [:sender_id] }
   validates :recipient_id, :presence => true
   validates :sender_id, :presence => true
 

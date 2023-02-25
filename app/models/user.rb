@@ -19,6 +19,8 @@ class User < ApplicationRecord
   validates :username, :presence => true
   has_secure_password
 
+  mount_uploader :image, ImageUploader
+
   has_many(:photos, { :class_name => "Photo", :foreign_key => "owner_id", :dependent => :destroy })
   has_many(:likes, { :class_name => "Like", :foreign_key => "fan_id", :dependent => :destroy })
   has_many(:follow_requests_sent, { :class_name => "FollowRequest", :foreign_key => "sender_id", :dependent => :destroy })
@@ -28,4 +30,5 @@ class User < ApplicationRecord
   has_many(:recipients, { :through => :follow_requests_sent, :source => :recipient })
   has_many(:senders, { :through => :follow_requests_received, :source => :sender })
 
+  
 end
