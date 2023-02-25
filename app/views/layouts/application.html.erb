@@ -3,7 +3,6 @@
   <head>
     <title>PhotogramFinal</title>
     <%= csrf_meta_tags %>
-
     <!-- Expand the number of characters we can use in the document beyond basic ASCII 🎉 -->
     <meta charset="utf-8">
 
@@ -21,7 +20,7 @@
 
     <nav>
       <ul>
-        <li> <a href="/"> All users </a> </li>
+        <li> <a href="/users"> All users </a> </li>
         <li> <a href="/photos"> All public photos </a> </li>
         <% if session.fetch(:user_id) == nil %>
           <li> <a href="/user_sign_in"> Sign In </a> </li>
@@ -40,7 +39,7 @@
     <% if alert.present? %>
       <div class="alert alert-danger" role="alert"> <%= alert %> </div>
     <% end %>
-    
+
     <%= yield %>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

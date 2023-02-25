@@ -1,0 +1,68 @@
+<h1> <%= @user.username %> </h1>
+
+<dl>
+  <dt>Private</dt>
+  <dd><%= @user.private %></dd>
+  <dt>Followers</dt>
+  <dd>
+    <%= @user.follow_requests_received.where({ :status => "accepted"}).count %>
+    <% follow_req = @user.follow_requests_received.where({ :sender => session[:user_id]}).at(0) %>
+    <% if follow_req == nil %>
+      <div>
+        <form action="/insert_follow_request" method="post">
+        <input type="hidden" name="query_recipient_id" value="<%= @user.id %>">
+        <button> Follow </button>
+        </form>
+      </div>
+    <% else %>
+      <a href="/delete_follow_request/<%= follow_req.id %>"> Unfollow </a>
+    <% end %>
+  </dd>
+  <dt>Following</dt>
+  <dd> <%= @user.follow_requests_sent.where({ :status => "accepted"}).count %></dd>
+
+</dl>
+
+<nav>
+  <ul>
+    <li>
+      <a href="/users/<%= @user.username %>">Profile</a>
+    </li>
+    <li>
+      <a href="/users/<%= @user.username %>/liked_photos">Liked photos</a>
+    </li>
+    <li>
+      <a href="/users/<%= @user.username %>/feed">Feed</a>
+    </li>
+    <li>
+      <a href="/users/<%= @user.username %>/discover">Discover</a>
+    </li>
+  </ul>
+</nav>
+
+<h2> Own photos (<%= @user.photos.count %>) </h2>
+
+<table border="1">
+  <tbody>
+  <tr>
+    <th> Image </th>
+    <th> Owner </th>
+    <th> Caption </th>
+    <th> Posted </th>
+    <th> Likes</th>
+    <th></th>
+  </tr>
+  <% @user.photos.each do |a_photo| %>
+    <tr>
+      <td> <img src="<%= a_photo.image %>"> </td>
+      <td> <%= a_photo.owner.username %> </td>
+      <td> <%= a_photo.caption %> </td>
+      <td> <%= time_ago_in_words(a_photo.created_at) %></td>
+      <td> <%= a_photo.likes_count %> </td>
+      <td>
+        <a href="/photos/<%= a_photo.id %>"> Show details </a>
+      </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

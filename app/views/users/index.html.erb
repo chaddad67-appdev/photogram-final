@@ -38,9 +38,11 @@
           <input type="hidden" name="query_recipient_id" value=<%= user.id %>>
           <button> Follow </button>
         </form>
-      <% else %>
+      <% elsif freq.status == "pending" %>
         Request sent.
         <a href="/delete_follow_request/<%= freq.id %>"> Cancel </a>
+      <% elsif freq.status == "accepted" %>
+        <a href="/delete_follow_request/<%= freq.id %>"> Unfollow </a>
       <% end %>
     </td>
 

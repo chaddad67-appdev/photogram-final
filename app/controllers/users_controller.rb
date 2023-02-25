@@ -7,6 +7,15 @@ class UsersController < ApplicationController
     render({ :template => "users/index.html.erb" })
   end
 
+  def show
+    @user = User.where({:username => params.fetch("username")}).at(0)
+    if @user.private && @user.id != session[:user_id] 
+      redirect_to("/", { :alert => "You're not authorized for that." })
+    else 
+      render({ :template => "users/show.html.erb" })
+    end
+  end
+
   def sign_in_form
     render({ :template => "users/sign_in.html.erb" })
   end

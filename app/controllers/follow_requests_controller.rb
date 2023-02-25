@@ -21,11 +21,17 @@ class FollowRequestsController < ApplicationController
     the_follow_request = FollowRequest.new
     the_follow_request.recipient_id = params.fetch("query_recipient_id")
     the_follow_request.sender_id = session[:user_id]
-    the_follow_request.status = "pending"
+    goto = ""
+    if User.where({:id => params.fetch("query_recipient_id")}).at(0).private
+      the_follow_request.status = "pending"
+    else
+      the_follow_request.status = "accepted"
+      goto = "users/#{User.where({:id => params.fetch("query_recipient_id")}).at(0).username}"
+    end
 
     if the_follow_request.valid?
       the_follow_request.save
-      redirect_to("/", { :notice => "Follow request created successfully." })
+      redirect_to("/#{goto}", { :notice => "Follow request created successfully." })
     else
       redirect_to("/", { :alert => the_follow_request.errors.full_messages.to_sentence })
     end
@@ -53,6 +59,6 @@ class FollowRequestsController < ApplicationController
 
     the_follow_request.destroy
 
-    redirect_to("/", { :notice => "Follow request deleted successfully."} )
+    redirect_to(request.referer, { :notice => "Follow request deleted successfully."} )
   end
 end
