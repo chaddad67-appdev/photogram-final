@@ -1,0 +1,53 @@
+<h1>List of users</h1>
+
+<hr>
+
+<table border="1">
+  <tr>
+    <th>
+      Username
+    </th>
+
+    <th>
+      Private?
+    </th>
+
+    <th></th>
+
+    <th></th>
+  </tr>
+
+  <% @users.each do |user| %>
+  <tr>
+    <td>
+      <%= user.username %>
+    </td>
+
+    <td>
+      <% if user.private %>
+        Yes
+      <% else %>
+        No
+      <% end %>
+    </td>
+
+    <td>
+      <% freq = FollowRequest.where({ :sender => session[:user_id], :recipient => user.id }).at(0) %>
+      <% if freq == nil %>
+        <form action="/insert_follow_request" method="post">
+          <input type="hidden" name="query_recipient_id" value=<%= user.id %>>
+          <button> Follow </button>
+        </form>
+      <% else %>
+        Request sent.
+        <a href="/delete_follow_request/<%= freq.id %>"> Cancel </a>
+      <% end %>
+    </td>
+
+    <td>
+      <a href="/users/<%= user.username %>">Show details</a>
+    </td>
+  </tr>
+  
+  <% end %>
+</table>

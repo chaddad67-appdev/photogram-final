@@ -1,9 +1,14 @@
-class UserAuthenticationController < ApplicationController
+class UsersController < ApplicationController
   # Uncomment line 3 in this file and line 5 in ApplicationController if you want to force users to sign in before any other actions.
   # skip_before_action(:force_user_sign_in, { :only => [:sign_up_form, :create, :sign_in_form, :create_cookie] })
 
+  def index
+    @users = User.all.order({:username => :asc })
+    render({ :template => "users/index.html.erb" })
+  end
+
   def sign_in_form
-    render({ :template => "user_authentication/sign_in.html.erb" })
+    render({ :template => "users/sign_in.html.erb" })
   end
 
   def create_cookie
@@ -18,6 +23,7 @@ class UserAuthenticationController < ApplicationController
         redirect_to("/user_sign_in", { :alert => "Incorrect password." })
       else
         session[:user_id] = user.id
+        session[:user_name] = user.username
       
         redirect_to("/", { :notice => "Signed in successfully." })
       end
@@ -33,7 +39,7 @@ class UserAuthenticationController < ApplicationController
   end
 
   def sign_up_form
-    render({ :template => "user_authentication/sign_up.html.erb" })
+    render({ :template => "users/sign_up.html.erb" })
   end
 
   def create
@@ -41,8 +47,8 @@ class UserAuthenticationController < ApplicationController
     @user.email = params.fetch("query_email")
     @user.password = params.fetch("query_password")
     @user.password_confirmation = params.fetch("query_password_confirmation")
-    @user.comments_count = params.fetch("query_comments_count")
-    @user.likes_count = params.fetch("query_likes_count")
+    @user.comments_count = 0
+    @user.likes_count = 0
     @user.username = params.fetch("query_username")
     @user.private = params.fetch("query_private", false)
 
@@ -50,7 +56,8 @@ class UserAuthenticationController < ApplicationController
 
     if save_status == true
       session[:user_id] = @user.id
-   
+      session[:user_name] = @user.username
+
       redirect_to("/", { :notice => "User account created successfully."})
     else
       redirect_to("/user_sign_up", { :alert => @user.errors.full_messages.to_sentence })
@@ -58,7 +65,7 @@ class UserAuthenticationController < ApplicationController
   end
     
   def edit_profile_form
-    render({ :template => "user_authentication/edit_profile.html.erb" })
+    render({ :template => "users/edit_profile.html.erb" })
   end
 
   def update
@@ -76,7 +83,7 @@ class UserAuthenticationController < ApplicationController
 
       redirect_to("/", { :notice => "User account updated successfully."})
     else
-      render({ :template => "user_authentication/edit_profile_with_errors.html.erb" , :alert => @user.errors.full_messages.to_sentence })
+      render({ :template => "users/edit_profile_with_errors.html.erb" , :alert => @user.errors.full_messages.to_sentence })
     end
   end
 
