@@ -9,10 +9,15 @@ class UsersController < ApplicationController
 
   def show
     @user = User.where({:username => params.fetch("username")}).at(0)
-    if @user.private && @user.id != session[:user_id] 
-      redirect_to("/", { :alert => "You're not authorized for that." })
+    follow_req  = FollowRequest.where({ :sender_id => session[:user_id], :recipient_id => @user.id }).at(0)
+    if @user.private == false || @user.id == session[:user_id] || follow_req != nil
+      if @user.private == false || @user.id == session[:user_id] || follow_req.status == "accepted"
+        render({ :template => "users/show.html.erb" })
+      else
+        redirect_to("/", { :alert => "You're not authorized for that." })
+      end
     else 
-      render({ :template => "users/show.html.erb" })
+      redirect_to("/", { :alert => "You're not authorized for that." })
     end
   end
 
@@ -90,9 +95,23 @@ class UsersController < ApplicationController
     if @user.valid?
       @user.save
 
-      redirect_to("/", { :notice => "User account updated successfully."})
+      redirect_to("users/edit_profile.html.erb", { :notice => "User account updated successfully."})
     else
       render({ :template => "users/edit_profile_with_errors.html.erb" , :alert => @user.errors.full_messages.to_sentence })
+    end
+  end
+
+  def update_name
+    @user = @current_user
+    @user.username = params.fetch("query_username")
+    @user.private = params.fetch("query_private", false)
+    
+    if @user.valid?
+      @user.save
+
+      redirect_to("/users/#{@user.username}", { :notice => "User account updated successfully."})
+    else
+      redirect_to("/users/#{@user.username}", {:alert => @user.errors.full_messages.to_sentence })
     end
   end
 

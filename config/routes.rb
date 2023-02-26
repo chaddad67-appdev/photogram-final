@@ -90,6 +90,7 @@ Rails.application.routes.draw do
   get("/edit_user_profile", { :controller => "users", :action => "edit_profile_form" })       
   # UPDATE RECORD
   post("/modify_user", { :controller => "users", :action => "update" })
+  post("/modify_user/:path_id", { :controller => "users", :action => "update_name" })
   
   # DELETE RECORD
   get("/cancel_user_account", { :controller => "users", :action => "destroy" })

@@ -4,8 +4,8 @@
   <dt>Private</dt>
   <dd><%= @user.private %></dd>
   <dt>Followers</dt>
-  <dd>
-    <%= @user.follow_requests_received.where({ :status => "accepted"}).count %>
+  <dd> <%= @user.follow_requests_received.where({ :status => "accepted"}).count %> </dd>
+  <% if @user.id != session[:user_id ]%>
     <% follow_req = @user.follow_requests_received.where({ :sender => session[:user_id]}).at(0) %>
     <% if follow_req == nil %>
       <div>
@@ -15,8 +15,37 @@
         </form>
       </div>
     <% else %>
-      <a href="/delete_follow_request/<%= follow_req.id %>"> Unfollow </a>
+      <dd> <a href="/delete_follow_request/<%= follow_req.id %>"> Unfollow </a> </dd>
     <% end %>
+  <% else %>
+    <h5> Pending follow requests </h5>
+    <ul>
+    <% @user.follow_requests_received.each do |follow_req| %>
+      <% if follow_req.status == "pending" %>
+        <li> <%= follow_req.sender.username %>
+          <form action="/modify_follow_request/<%= follow_req.id %>" method="post">
+            <input name="query_status" value="accepted" type="hidden">
+            <button> Accept </button>
+          </form>
+          <form action="/modify_follow_request/<%= follow_req.id %>" method="post">
+            <input name="query_status" value="rejected" type="hidden">
+            <button> Reject </button>
+          </form>
+        </li>
+      <% end %>
+    <% end %>
+    </ul>
+    <dt>Edit user</dt>
+    <dd>
+    <form action="/modify_user/<%= session[:user_id] %>" method="post">
+      <label for="browser_username">Username</label>
+      <input id="browser_username" type="text" name="query_username" placeholder="Enter a username..." value="<%= @user.username %>">
+      <label for="browser_private">Private?</label>
+      <input id="browser_private" type="checkbox" name="query_private" checked="">
+      <button> Update user</button>
+    </form>
+    </dd>
+  <% end %>
   </dd>
   <dt>Following</dt>
   <dd> <%= @user.follow_requests_sent.where({ :status => "accepted"}).count %></dd>
@@ -54,7 +83,7 @@
   </tr>
   <% @user.photos.each do |a_photo| %>
     <tr>
-      <td> <img src="<%= a_photo.image %>"> </td>
+      <td> <img src="<%= a_photo.image %>" width="400" height="400"> </td>
       <td> <%= a_photo.owner.username %> </td>
       <td> <%= a_photo.caption %> </td>
       <td> <%= time_ago_in_words(a_photo.created_at) %></td>

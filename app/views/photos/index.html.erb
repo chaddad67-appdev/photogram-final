@@ -32,7 +32,7 @@
 
       <% @list_of_photos.each do |a_photo| %>
       <tr>
-        <td> <img src="<%= a_photo.image %>" class="img-responsive"> </td>
+        <td> <img src="<%= a_photo.image %>" width="200" height="200" > </td>
         <td> <%= a_photo.caption %> </td>
         <td> <%= a_photo.owner.username %> </td>
         <td> <%= time_ago_in_words(a_photo.created_at) %> ago </td>
