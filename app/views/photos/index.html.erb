@@ -31,18 +31,20 @@
       </tr>
 
       <% @list_of_photos.each do |a_photo| %>
-      <tr>
-        <td> <img src="<%= a_photo.image %>" width="200" height="200" > </td>
-        <td> <%= a_photo.caption %> </td>
-        <td> <%= a_photo.owner.username %> </td>
-        <td> <%= time_ago_in_words(a_photo.created_at) %> ago </td>
-        <td> <%= a_photo.likes_count %> </td>
-        <td>
-          <a href="/photos/<%= a_photo.id %>">
-            Show details
-          </a>
-        </td>
-      </tr>
+        <% if a_photo.owner.private == false %>
+          <tr>
+            <td> <img src="<%= a_photo.image %>" width="200" height="200" > </td>
+            <td> <%= a_photo.caption %> </td>
+            <td> <%= a_photo.owner.username %> </td>
+            <td> <%= time_ago_in_words(a_photo.created_at) %> ago </td>
+            <td> <%= a_photo.likes_count %> </td>
+            <td>
+              <a href="/photos/<%= a_photo.id %>">
+                Show details
+              </a>
+            </td>
+          </tr>
+        <% end %>
       <% end %>
     </table>
   </div>

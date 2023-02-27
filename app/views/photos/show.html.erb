@@ -18,7 +18,7 @@
       <dd> <%= @the_photo.caption %> </dd>
 
       <dt> Owner </dt>
-      <dd> <%= @the_photo.owner_id %> </dd>
+      <dd> <%= @the_photo.owner.username %> </dd>
 
       <dt> Posted </dt>
       <dd> <%= time_ago_in_words(@the_photo.created_at) %> ago </dd>

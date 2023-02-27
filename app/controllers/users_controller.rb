@@ -9,17 +9,60 @@ class UsersController < ApplicationController
 
   def show
     @user = User.where({:username => params.fetch("username")}).at(0)
+    @table_title = "Own photos (#{@user.photos.count})"
+    @photo_array = @user.photos
+
     follow_req  = FollowRequest.where({ :sender_id => session[:user_id], :recipient_id => @user.id }).at(0)
-    if @user.private == false || @user.id == session[:user_id] || follow_req != nil
-      if @user.private == false || @user.id == session[:user_id] || follow_req.status == "accepted"
-        render({ :template => "users/show.html.erb" })
-      else
+    if session[:user_id] != nil
+      if @user.private == false || @user.id == session[:user_id] || follow_req != nil
+        if @user.private == false || @user.id == session[:user_id] || follow_req.status == "accepted"
+          render({ :template => "users/show.html.erb" })
+        else
+          redirect_to("/", { :alert => "You're not authorized for that." })
+        end
+      else 
         redirect_to("/", { :alert => "You're not authorized for that." })
       end
-    else 
-      redirect_to("/", { :alert => "You're not authorized for that." })
+    else
+      redirect_to("/user_sign_in", { :alert => "You have to sign in first."} )
     end
   end
+
+  def show_content
+    @user = User.where({:username => params.fetch("username")}).at(0)
+    content = params.fetch("content")
+    if content == "liked_photos"
+      @table_title = "Liked photos (#{@user.likes_count})"
+      @photo_array = @user.likes.map{|a| a.photo}
+    elsif content == "feed"
+      @photo_array = FollowRequest.where({ :sender_id => @user.id, :status => "accepted"}).map{|a| a.recipient}.map{|a| a.photos}.flatten
+      @table_title = "Feed (#{@photo_array.count})"
+    elsif content == "discover"
+      @photo_array = FollowRequest.where({ :sender_id => @user.id, :status => "accepted"}).map{|a| a.recipient}.map{|a| a.likes}.flatten.map{|a| a.photo}.flatten
+      @table_title = "Discover (#{@photo_array.count})"
+    else
+      # redirect_to("/users/#{@user.username}", { :alert => "Invalid url."} )
+      @table_title = "Own photos (#{@user.photos.count})"
+      @photo_array = @user.photos
+    end
+
+    follow_req  = FollowRequest.where({ :sender_id => session[:user_id], :recipient_id => @user.id }).at(0)
+    if session[:user_id] != nil
+      if @user.private == false || @user.id == session[:user_id] || follow_req != nil
+        if @user.private == false || @user.id == session[:user_id] || follow_req.status == "accepted"
+          render({ :template => "users/show.html.erb" })
+        else
+          redirect_to("/", { :alert => "You're not authorized for that." })
+        end
+      else 
+        redirect_to("/", { :alert => "You're not authorized for that." })
+      end
+    else
+      redirect_to("/user_sign_in", { :alert => "You have to sign in first."} )
+    end
+  end
+
+
 
   def sign_in_form
     render({ :template => "users/sign_in.html.erb" })
@@ -83,7 +126,7 @@ class UsersController < ApplicationController
   end
 
   def update
-    @user = @current_user
+    @user = User.where({ :id => session[:user_id]}).at(0)
     @user.email = params.fetch("query_email")
     @user.password = params.fetch("query_password")
     @user.password_confirmation = params.fetch("query_password_confirmation")
@@ -94,15 +137,14 @@ class UsersController < ApplicationController
     
     if @user.valid?
       @user.save
-
-      redirect_to("users/edit_profile.html.erb", { :notice => "User account updated successfully."})
+      redirect_to("/edit_user_profile", { :notice => "User account updated successfully."})
     else
-      render({ :template => "users/edit_profile_with_errors.html.erb" , :alert => @user.errors.full_messages.to_sentence })
+      redirect_to("/edit_user_profile", {:alert => @user.errors.full_messages.to_sentence })
     end
   end
 
   def update_name
-    @user = @current_user
+    @user = User.where({ :id => session[:user_id]}).at(0)
     @user.username = params.fetch("query_username")
     @user.private = params.fetch("query_private", false)
     

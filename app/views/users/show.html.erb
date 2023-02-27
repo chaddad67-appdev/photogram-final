@@ -69,7 +69,7 @@
   </ul>
 </nav>
 
-<h2> Own photos (<%= @user.photos.count %>) </h2>
+<h2> <%= @table_title %> </h2>
 
 <table border="1">
   <tbody>
@@ -81,12 +81,12 @@
     <th> Likes</th>
     <th></th>
   </tr>
-  <% @user.photos.each do |a_photo| %>
+  <% @photo_array.each do |a_photo| %>
     <tr>
       <td> <img src="<%= a_photo.image %>" width="400" height="400"> </td>
       <td> <%= a_photo.owner.username %> </td>
       <td> <%= a_photo.caption %> </td>
-      <td> <%= time_ago_in_words(a_photo.created_at) %></td>
+      <td> <%= time_ago_in_words(a_photo.created_at) %> ago </td>
       <td> <%= a_photo.likes_count %> </td>
       <td>
         <a href="/photos/<%= a_photo.id %>"> Show details </a>

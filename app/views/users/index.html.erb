@@ -22,22 +22,23 @@
     </td>
 
     <td>
-      <% freq = FollowRequest.where({ :sender => session[:user_id], :recipient => user.id }).at(0) %>
-      <% if freq == nil %>
-        <% if user.id != session[:user_id] %>
-          <form action="/insert_follow_request" method="post">
-            <input type="hidden" name="query_recipient_id" value=<%= user.id %>>
-            <button> Follow </button>
-          </form>
+      <% if session[:user_id] != nil %>
+        <% freq = FollowRequest.where({ :sender => session[:user_id], :recipient => user.id }).at(0) %>
+        <% if freq == nil %>
+          <%# if user.id != session[:user_id] %>
+            <form action="/insert_follow_request" method="post">
+              <input type="hidden" name="query_recipient_id" value=<%= user.id %>>
+              <button> Follow </button>
+            </form>
+          <%# end %>
+        <% elsif freq.status == "pending" %>
+          Request sent.
+          <a href="/delete_follow_request/<%= freq.id %>"> Cancel </a>
+        <% elsif freq.status == "accepted" %>
+          <a href="/delete_follow_request/<%= freq.id %>"> Unfollow </a>
         <% end %>
-      <% elsif freq.status == "pending" %>
-        Request sent.
-        <a href="/delete_follow_request/<%= freq.id %>"> Cancel </a>
-      <% elsif freq.status == "accepted" %>
-        <a href="/delete_follow_request/<%= freq.id %>"> Unfollow </a>
       <% end %>
     </td>
-
     <td>
       <a href="/users/<%= user.username %>">Show details</a>
     </td>

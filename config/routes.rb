@@ -80,6 +80,7 @@ Rails.application.routes.draw do
   get("/", { :controller => "users", :action => "index" })
   get("/users", {:controller => "users", :action => "index"})
   get("/users/:username", {:controller => "users", :action => "show"})
+  get("/users/:username/:content", {:controller => "users", :action => "show_content"})
 
   # SIGN UP FORM
   get("/user_sign_up", { :controller => "users", :action => "sign_up_form" })        
