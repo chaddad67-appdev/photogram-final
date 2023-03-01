@@ -3,7 +3,7 @@ class UsersController < ApplicationController
   # skip_before_action(:force_user_sign_in, { :only => [:sign_up_form, :create, :sign_in_form, :create_cookie] })
 
   def index
-    @users = User.all.order({:username => :asc })
+    @users = User.all.order('lower(username)') #lowecase and then order, or sort
     render({ :template => "users/index.html.erb" })
   end
 
@@ -38,7 +38,7 @@ class UsersController < ApplicationController
       @photo_array = FollowRequest.where({ :sender_id => @user.id, :status => "accepted"}).map{|a| a.recipient}.map{|a| a.photos}.flatten
       @table_title = "Feed (#{@photo_array.count})"
     elsif content == "discover"
-      @photo_array = FollowRequest.where({ :sender_id => @user.id, :status => "accepted"}).map{|a| a.recipient}.map{|a| a.likes}.flatten.map{|a| a.photo}.flatten
+      @photo_array = FollowRequest.where({ :sender_id => @user.id, :status => "accepted"}).map{|a| a.recipient}.map{|a| a.likes}.flatten.map{|a| a.photo}
       @table_title = "Discover (#{@photo_array.count})"
     else
       # redirect_to("/users/#{@user.username}", { :alert => "Invalid url."} )

@@ -83,7 +83,11 @@
   </tr>
   <% @photo_array.each do |a_photo| %>
     <tr>
-      <td> <img src="<%= a_photo.image %>" width="400" height="400"> </td>
+      <% if a_photo.image_identifier.include? "https" %>
+        <td> <img src="<%= a_photo.image_identifier %>" width="300" height="300" > </td>
+      <% else %>
+        <td> <img src="<%= a_photo.image %>" width="300" height="300" > </td>
+      <% end %>
       <td> <%= a_photo.owner.username %> </td>
       <td> <%= a_photo.caption %> </td>
       <td> <%= time_ago_in_words(a_photo.created_at) %> ago </td>

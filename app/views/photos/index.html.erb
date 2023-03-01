@@ -33,7 +33,11 @@
       <% @list_of_photos.each do |a_photo| %>
         <% if a_photo.owner.private == false %>
           <tr>
-            <td> <img src="<%= a_photo.image %>" width="200" height="200" > </td>
+            <% if a_photo.image_identifier.include? "https" %>
+              <td> <img src="<%= a_photo.image_identifier %>" width="200" height="200" > </td>
+            <% else %>
+              <td> <img src="<%= a_photo.image %>" width="200" height="200" > </td>
+            <% end %>
             <td> <%= a_photo.caption %> </td>
             <td> <%= a_photo.owner.username %> </td>
             <td> <%= time_ago_in_words(a_photo.created_at) %> ago </td>

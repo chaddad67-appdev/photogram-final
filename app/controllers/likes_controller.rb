@@ -22,8 +22,8 @@ class LikesController < ApplicationController
     the_like.photo_id = params.fetch("query_photo_id")
     the_like.fan_id = session[:user_id]
 
-    the_like.photo.likes_count = the_like.photo.likes_count + 1
-    the_like.fan.likes_count = the_like.fan.likes_count + 1
+    the_like.photo.likes_count = the_like.photo.likes.count + 1
+    the_like.fan.likes_count = the_like.fan.likes.count + 1
     # the_photo = Photo.where({:id => params.fetch("query_photo_id")}).at(0)
     # the_photo.likes_count = the_photo.likes_count + 1
 
@@ -42,7 +42,7 @@ class LikesController < ApplicationController
     the_like = Like.where({ :id => the_id }).at(0)
 
     the_like.photo_id = params.fetch("query_photo_id")
-    the_like.fan_id = params.fetch("query_fan_id")
+    the_like.fan_id = session[:user_id]
 
     if the_like.valid?
       the_like.save
@@ -56,8 +56,8 @@ class LikesController < ApplicationController
     the_id = params.fetch("path_id")
     the_like = Like.where({ :id => the_id }).at(0)
 
-    the_like.photo.likes_count = the_like.photo.likes_count - 1
-    the_like.fan.likes_count = the_like.fan.likes_count - 1
+    the_like.photo.likes_count = the_like.photo.likes.count - 1
+    the_like.fan.likes_count = the_like.fan.likes.count - 1
     # the_photo = the_like.photo
     # the_photo.likes_count = the_photo.likes_count - 1
 

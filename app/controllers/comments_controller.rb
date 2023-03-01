@@ -24,8 +24,8 @@ class CommentsController < ApplicationController
     the_comment.photo_id = params.fetch("query_photo_id")
     the_comment.body = params.fetch("query_body")
 
-    the_comment.photo.comments_count = the_comment.photo.comments_count  + 1
-    the_comment.author.comments_count = the_comment.author.comments_count + 1
+    the_comment.photo.comments_count = the_comment.photo.comments.count  + 1
+    the_comment.author.comments_count = the_comment.author.comments.count + 1
 
     if the_comment.valid?
       the_comment.save
@@ -57,8 +57,8 @@ class CommentsController < ApplicationController
     the_id = params.fetch("path_id")
     the_comment = Comment.where({ :id => the_id }).at(0)
 
-    the_comment.photo.comments_count = the_comment.photo.comments_count  - 1
-    the_comment.author.comments_count = the_comment.author.comments_count - 1
+    the_comment.photo.comments_count = the_comment.photo.comments.count  - 1
+    the_comment.author.comments_count = the_comment.author.comments.count - 1
 
     the_comment.photo.save
     the_comment.author.save

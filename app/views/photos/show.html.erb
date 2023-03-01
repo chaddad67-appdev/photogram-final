@@ -12,7 +12,11 @@
 
     <dl>
       <dt> Image </dt>
-      <dd> <img src="<%= @the_photo.image %>" width="400" height="400"> </dd>
+      <% if @the_photo.image_identifier.include? "https" %>
+        <dd> <img src="<%= @the_photo.image_identifier %>" width="400" height="400" > </dd>
+      <% else %>
+        <dd> <img src="<%= @the_photo.image %>" width="400" height="400" > </dd>
+      <% end %>
 
       <dt> Caption </dt>
       <dd> <%= @the_photo.caption %> </dd>
@@ -27,7 +31,7 @@
       <dd> <%= @the_photo.likes_count %> </dd>
 
       <dt> Comments count </dt>
-      <dd> <%= @the_photo.comments_count %> </dd>
+      <dd> <%= @the_photo.comments.count %> </dd>
 
       <dt> Fans </dt>
       <dd>
